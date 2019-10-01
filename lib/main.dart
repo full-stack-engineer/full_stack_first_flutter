@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:flare_flutter/flare_actor.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,6 +27,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  bool _switchFlag = true;
 
   void _incrementCounter() {
     setState(() {
@@ -43,14 +46,17 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _incrementCounter,
-          tooltip: 'Increment',
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          child: Icon(
-            Icons.add,
-            size: 45,
+        floatingActionButton: Container(
+          margin: EdgeInsets.only(bottom: 10),
+          child: FloatingActionButton(
+            onPressed: _incrementCounter,
+            tooltip: 'Increment',
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+            child: Icon(
+              Icons.add,
+              size: 45,
+            ),
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation
@@ -102,17 +108,15 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
               margin: EdgeInsets.only(top: 30),
               height: 220,
-              width: 340,
-              decoration: new BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey[350],
-                    blurRadius: 8.0, // has the effect of softening the shadow
-                    spreadRadius: 1.0, // has the effect of extending the shadow
-                  )
-                ],
+              width: MediaQuery.of(context).size.width,
+              child: Swiper(
+                itemBuilder: (BuildContext context, int index) {
+                  return taskWidget();
+                },
+                itemCount: 8,
+                viewportFraction: 0.8,
+                scale: 0.9,
               ),
-              child: taskWidget(),
             ),
           ],
         ),
@@ -163,33 +167,63 @@ class _MyHomePageState extends State<MyHomePage> {
       );
 
   Widget switchWidget() => Container(
-        color: Colors.black,
-        height: 80,
-        width: 380,
+        height: 70,
+        child: GestureDetector(
+          onTap: () {
+            _changeSwitch();
+          },
+          child: FlareActor(
+            "assets/done_switch.flr",
+            animation: (_switchFlag ? "On" : "Off"),
+            fit: BoxFit.cover,
+          ),
+        ),
       );
 
-  Widget taskWidget() => Card(
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(top: 40, right: 30, left: 30),
-              child: LinearProgressIndicator(
-                value: 0.3,
-                valueColor: AlwaysStoppedAnimation(Colors.indigoAccent[700]),
-                backgroundColor: Colors.grey,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 30, left: 30, right: 20),
-              child: Text(
-                'React + TypeScriptを完璧にする（たぶん）',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+  void _changeSwitch() {
+    print(_switchFlag);
+    setState(() {
+      if (_switchFlag) {
+        _switchFlag = false;
+      } else {
+        _switchFlag = true;
+      }
+    });
+  }
+
+  Widget taskWidget() => Container(
+        decoration: new BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey[350],
+              blurRadius: 8.0, // has the effect of softening the shadow
+              spreadRadius: 1.0, // has the effect of extending the shadow
+            )
+          ],
+        ),
+        child: Card(
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(top: 40, right: 30, left: 30),
+                child: LinearProgressIndicator(
+                  value: 0.3,
+                  valueColor: AlwaysStoppedAnimation(Colors.indigoAccent[700]),
+                  backgroundColor: Colors.grey,
                 ),
               ),
-            ),
-          ],
+              Padding(
+                padding: EdgeInsets.only(top: 30, left: 30, right: 20),
+                child: Text(
+                  'React + TypeScriptを完璧にする（たぶん）',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       );
 }
